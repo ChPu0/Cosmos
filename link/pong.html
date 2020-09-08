@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+
+  <style type="text/css">
+	canvas {
+		background : black;
+		}
+	span {
+		font-size : 25px;
+		color : red;
+		text-align : center;
+		font-family : "impact", "arial";
+		}
+	p {
+		font-size : 25px;
+		color : black;
+		font-family : "impact", "arial";
+		}
+	h1 {
+		font-size : 45px;
+		color : red;
+		font-family : "impact", "arial";
+		}
+	canvas {
+		border : solid red;
+		}
+	#container {
+		display : flex;
+		justify-content : space-evenly;
+		}
+	#commandes {
+		font-size : 15px;
+		columns : 2;
+		margin-left : 10%;
+		}		
+  </style>
+ </head>
+ 
+ <body>
+    <div id="container">
+		<h1>Pong</h1>
+	</div>
+    <div id="commandes">	
+		<p id="commandes">Joueur 1:</p> 
+		<p id="commandes">A = monter</p> 
+		<p id="commandes">Q = descendre</p> 
+		<p id="commandes">Joueur 2:</p> 
+		<p id="commandes">P = monter</p> 
+		<p id="commandes">L = descendre</p> 
+	</div>
+
+   <div id="container">
+   <canvas id="canvas" width="700" height="400"></canvas>
+   </div>
+   <div id="container">
+   <p>Score Joueur de Gauche : <span id="scoreGauche">0</span></p>
+   <p>Score Joueur de Droite : <span id="scoreDroite">0</span></p>
+   </div>
+ <script type="application/javascript">
+  
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var milieuCanvasX = canvas.width/2;
+var milieuCanvasY = canvas.height/2;
+var positionBalleX = canvas.width/2;
+var positionBalleY = canvas.height-100;
+var rayonBalle = 6;
+var vitesseX = 1;
+var vitesseY = -1;
+var scoreJoueurGauche = 0;
+var scoreJoueurDroite = 0;
+var positionRaquetteGaucheY = milieuCanvasY-20;
+var positionRaquetteDroiteY = milieuCanvasY-20;
+	var toucheAappuyée = false;
+	var toucheQappuyée = false;
+	var touchePappuyée = false;
+	var toucheLappuyée = false;
+
+// balle
+function drawBall() {
+    ctx.beginPath();
+    ctx.arc(positionBalleX, positionBalleY, rayonBalle, 0, Math.PI*2);
+    ctx.fillStyle = "yellow";
+    ctx.fill();
+    ctx.closePath();
+}
+
+	//Raquette de gauche
+function drawRaquetteGauche(taille) {	
+        ctx.fillStyle = 'white';
+        ctx.fillRect(10, positionRaquetteGaucheY, 10, taille);
+}
+	//Raquette de droite
+function drawRaquetteDroite(taille) {	
+	ctx.fillStyle = 'white';
+        ctx.fillRect(canvas.width-20, positionRaquetteDroiteY, 10, taille);
+}
+    //Filet
+function drawFilet() {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(milieuCanvasX-2.5,0, 5, canvas.height);		
+}
+
+function rebondBalle() {
+//si la balle touche la raquette droite ou la raquette gauche elle inverse sa vitesse (marche arriere)
+// en détail : si la position de la balle en X dépasse la taille du canvas moins l'épaisseur du vide et de la raquette droite ET que la balle en Y se trouve entre la haut et le bas de la raquette +/- rayon de la balle alors elle inverse sa vitesse (marche arriere)
+// ET : si la position de la balle en X est inférieure à 0 moins l'épaisseur du vide et de la raquette gauche ET que la balle en Y se trouve entre la haut et le bas de la raquette +/- rayon de la balle alors elle inverse sa vitesse (marche arriere)
+	if( (positionBalleX == canvas.width-20 && positionBalleY > positionRaquetteDroiteY-6 && positionBalleY < (positionRaquetteDroiteY+40-scoreJoueurDroite+6)) || positionBalleX == 20 && positionBalleY > positionRaquetteGaucheY-6 && positionBalleY < (positionRaquetteGaucheY+(46-scoreJoueurGauche))) {
+		vitesseX = -vitesseX;
+	}
+//si la balle touche le mur bas ou le mur haut elle inverse sa vitesse (marche arriere)
+	if(positionBalleY > canvas.height || positionBalleY < 0) {
+		vitesseY = -vitesseY;
+	}
+}
+
+//Compte le score des joueurs
+function score() {
+//Si la balle touche le bord droit du canvas, point pour joueur de gauche	
+	if(positionBalleX == canvas.width+6){
+		scoreJoueurGauche +=1;
+		document.getElementById("scoreGauche").innerHTML = scoreJoueurGauche;
+		alert("Le joueur de gauche à "+scoreJoueurGauche);
+		positionBalleX = canvas.width/2;
+	}
+//Sila balle touche le bord gauche du canvas, point pour joueur de droite		
+	else if(positionBalleX < -6) {
+		scoreJoueurDroite +=1;
+		document.getElementById("scoreDroite").innerHTML = scoreJoueurDroite;
+		alert("Le joueur de droite à "+scoreJoueurDroite);
+		positionBalleX = canvas.width/2;
+	}
+}
+
+//controle les raquettes avec les touches A Q & P L
+document.addEventListener("keydown", toucheAppuyee, false);
+document.addEventListener("keyup", toucheRelevee, false);
+
+function toucheAppuyee(e) {
+	if(e.key == "a") {
+		toucheAappuyée = true;
+	}
+	else if(e.key == "q") {
+		toucheQappuyée = true;
+	}
+	else if(e.key == "p") {
+		touchePappuyée = true;
+	}
+	else if(e.key == "l") {
+		toucheLappuyée = true;
+	}
+}
+
+function toucheRelevee(e) {
+	if(e.key == "a") {
+		toucheAappuyée = false;
+	}
+	else if(e.key == "q") {
+		toucheQappuyée = false;
+	}
+	else if(e.key == "p") {
+		touchePappuyée = false;
+	}
+	else if(e.key == "l") {
+		toucheLappuyée = false;
+	}
+}
+	
+function controleClavier(){
+
+	if(toucheAappuyée) {
+		positionRaquetteGaucheY -= 7;
+		if (positionRaquetteGaucheY < 0){
+			positionRaquetteGaucheY = 0;
+		}
+	}
+	else if(toucheQappuyée) {
+		positionRaquetteGaucheY	+= 7;
+		if (positionRaquetteGaucheY > canvas.height-40+scoreJoueurGauche){
+			positionRaquetteGaucheY = canvas.height-40+scoreJoueurGauche;
+		}	
+	}
+	else if(touchePappuyée) {
+		positionRaquetteDroiteY	-= 7;
+		if (positionRaquetteDroiteY < 0){
+			positionRaquetteDroiteY = 0;
+		}
+	}
+	
+	else if(toucheLappuyée) {
+		positionRaquetteDroiteY	+= 7;
+		if (positionRaquetteDroiteY > canvas.height-40+scoreJoueurDroite){
+			positionRaquetteDroiteY = canvas.height-40+scoreJoueurDroite;
+		}
+	}
+}
+
+// fonction GAME OVER selon le score
+function gameOver(score) {
+	if((scoreJoueurGauche == score) || (scoreJoueurDroite == score)) {
+		alert("GAME OVER");
+	}
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	//dessine les objets
+	drawFilet();
+    drawBall();
+	drawRaquetteGauche(40-scoreJoueurGauche);
+	drawRaquetteDroite(40-scoreJoueurDroite); 
+	controleClavier();
+    //anime la balle
+	positionBalleX += vitesseX;
+    positionBalleY -= vitesseY;
+	//lance le rebond
+	rebondBalle();
+	score();
+	gameOver(30); //Game Over selon le score entre parenthèses
+}
+
+
+
+setInterval(draw, 10);
+
+
+  </script>
+ 
+ </body>
+
+ </html>

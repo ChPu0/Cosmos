@@ -1,0 +1,61 @@
+
+
+/* Feuiile de style pour les etoiles de la section 1 */
+
+
+.starA{
+  position: relative;
+  margin-top:200px;
+  margin-left: 300px;
+  font-weight: bold;
+  background-color: white;
+}
+.starB{
+  position: relative;
+  margin-top:0px;
+  margin-left: 0px;
+  font-weight: bold;
+  background-color: white;
+}
+.starC{
+  position: relative;
+  margin-top:-200px;
+  margin-left: -300px;
+  font-weight: bold;
+  background-color: white;
+}
+.starD{
+  position: relative;
+  margin-top:200px;
+  margin-left: -300px;
+  font-weight: bold;
+  background-color: white;
+}
+.starE{
+  position: relative;
+  margin-top:-200px;
+  margin-left: 300px;
+  font-weight: bold;
+  background-color: white;
+}
+.starF{
+  position: relative;
+  margin-top:100px;
+  margin-left: 100px;
+  font-weight: bold;
+  background-color: white;
+}
+.starG{
+  position: relative;
+  margin-top:-100px;
+  margin-left: -100px;
+  font-weight: bold;
+  background-color: white;
+}
+.starH{
+  position: relative;
+  margin-top:50px;
+  margin-left: 50px;
+  font-weight: bold;
+  background-color: white;
+}
